@@ -5,7 +5,7 @@ class Analytic < ApplicationRecord
 
   def increment_visits!
     ActiveRecord::Base.transaction do
-      increment(:visits)
+      update_column(:visits, visits + 1)
       touch(:last_visit_at)
       save!
     end

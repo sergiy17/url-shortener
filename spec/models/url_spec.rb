@@ -1,8 +1,12 @@
 RSpec.describe Url, type: :model do
+  describe 'associations' do
+    it { expect(described_class.reflect_on_association(:analytic).macro).to eq(:has_one) }
+  end
+
   describe 'validations' do
     context 'uniqueness' do
       describe 'original_url' do
-        it 'returns expected error' do
+        it 'returns expected error', :aggregate_failures  do
           first_url = FactoryBot.create(:url)
           dup_url = FactoryBot.build(:url, original_url: first_url.original_url)
 
@@ -32,7 +36,7 @@ RSpec.describe Url, type: :model do
 
     context 'presence' do
       describe 'original_url' do
-        it 'returns expected error' do
+        it 'returns expected error', :aggregate_failures  do
           url = FactoryBot.build(:url, original_url: nil)
 
           expect(url).to_not be_valid
@@ -45,7 +49,7 @@ RSpec.describe Url, type: :model do
           allow(GenerateString).to receive(:call).and_return(nil)
         end
 
-        it 'returns expected error' do
+        it 'returns expected error', :aggregate_failures do
           url = FactoryBot.build(:url)
 
           expect(url).to_not be_valid
@@ -58,7 +62,7 @@ RSpec.describe Url, type: :model do
   describe 'callbacks' do
     describe 'before_validation' do
       describe '#generate_slug' do
-        it 'generates slug' do
+        it 'generates slug', :aggregate_failures do
           url = FactoryBot.build(:url, slug: nil)
           expect(url.slug).to be_nil
           url.valid?

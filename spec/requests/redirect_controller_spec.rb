@@ -15,20 +15,36 @@ RSpec.describe RedirectController, type: :request do
 
         expect(response).to have_http_status(:moved_permanently)
       end
+
+      it 'increments the visit count' do
+        expect { get "/#{url_object.slug}" }
+          .to change { url_object.analytic.reload.visits }.by(1)
+      end
+
+      it 'updates the last_visit_at' do
+        expect(url_object.analytic.last_visit_at).to be_nil
+        get "/#{url_object.slug}"
+        expect(url_object.analytic.reload.last_visit_at).to_not be_nil
+      end
     end
 
     context 'when slug doesn\'t exists' do
       it 'returns a 404 status' do
-        get "/non-existent"
+        get '/non-existent'
 
         expect(response).to have_http_status(:not_found)
       end
 
-      it do
-        get "/non-existent"
+      it 'returns correct error message' do
+        get '/non-existent'
+
+        expect(JSON.parse(response.body)['error']).to eq('Not found')
+      end
+
+      it 'returns correct content_type' do
+        get '/non-existent'
 
         expect(response.content_type).to eq('application/json; charset=utf-8')
-        expect(JSON.parse(response.body)['error']).to eq('Not found')
       end
     end
   end
