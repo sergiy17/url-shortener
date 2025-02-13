@@ -1,5 +1,5 @@
 class Url < ApplicationRecord
-  validates :original_url, presence: true, uniqueness: true
+  validates :original_url, presence: true, uniqueness: true, url_format: true
   validates :slug, presence: true, uniqueness: true
 
   before_validation :generate_slug, if: :new_record?
