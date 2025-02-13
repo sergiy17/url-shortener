@@ -5,7 +5,7 @@ class Api::UrlsController < ApplicationController
     if result.success?
       render json: { slug: result.data[:slug] }
     else
-      render json: { errors: [result.data[:message]] }, status: :unprocessable_entity
+      render json: { errors: result.data[:errors] }, status: :unprocessable_entity
     end
   end
 
