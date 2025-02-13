@@ -8,6 +8,6 @@ class UrlFormatValidator < ActiveModel::EachValidator
       valid = false
     end
 
-    record.errors.add(attribute, (options[:message] || 'is not an url')) unless valid
+    record.errors.add(attribute, (options[:message] || 'is not valid')) unless valid
   end
 end
