@@ -1,4 +1,6 @@
 class Url < ApplicationRecord
+  self.per_page = 20
+
   has_one :analytic, dependent: :destroy
 
   validates :original_url, presence: true, uniqueness: true, url_format: true
