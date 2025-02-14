@@ -16,15 +16,9 @@ RSpec.describe RedirectController, type: :request do
         expect(response).to have_http_status(:moved_permanently)
       end
 
-      it 'increments the visit count' do
+      it 'enqueues UpdateVisitStatsJob with correct args' do
         expect { get "/#{url_object.slug}" }
-          .to change { url_object.analytic.reload.visits }.by(1)
-      end
-
-      it 'updates the last_visit_at' do
-        expect(url_object.analytic.last_visit_at).to be_nil
-        get "/#{url_object.slug}"
-        expect(url_object.analytic.reload.last_visit_at).to_not be_nil
+          .to have_enqueued_job(UpdateVisitStatsJob).exactly(:once).with(url_object.slug)
       end
     end
 

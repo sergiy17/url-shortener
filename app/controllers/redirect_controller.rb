@@ -8,7 +8,7 @@ class RedirectController < ApplicationController
       # or we might redirect the user to default page / home page
     end
 
-    url.analytic.increment_visits!
+    UpdateVisitStatsJob.perform_later(params[:slug])
 
     redirect_to url.original_url, status: :moved_permanently, allow_other_host: true
   end

@@ -37,15 +37,15 @@ RSpec.describe Analytic, type: :model do
     end
   end
 
-  describe '#increment_visits!' do
+  describe '#update_visit_stats!' do
     let!(:analytic) { FactoryBot.create(:analytic) }
 
     it 'increments the visits count' do
-      expect { analytic.increment_visits! }.to change { analytic.visits }.by(1)
+      expect { analytic.update_visit_stats! }.to change { analytic.visits }.by(1)
     end
 
     it 'updates last_visit_at within a transaction' do
-      expect { analytic.increment_visits! }.to change { analytic.last_visit_at }.from(nil)
+      expect { analytic.update_visit_stats! }.to change { analytic.last_visit_at }.from(nil)
     end
 
     it 'rolls back changes if an error occurs', :aggregate_failures do
@@ -53,7 +53,7 @@ RSpec.describe Analytic, type: :model do
 
       expect(analytic.visits).to eq(0)
       expect {
-        analytic.increment_visits!
+        analytic.update_visit_stats!
       }.to raise_exception ActiveRecord::RecordInvalid
       expect(analytic.reload.visits).to eq(0)
     end
