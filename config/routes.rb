@@ -15,5 +15,5 @@ Rails.application.routes.draw do
     resources :urls, only: %i[create index]
   end
 
-  get '/:slug', to: 'redirect#redirect'
+  get '/:slug', to: 'redirect#redirect', as: :short_url
 end

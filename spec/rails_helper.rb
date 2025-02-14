@@ -69,4 +69,8 @@ RSpec.configure do |config|
     Rails.cache.clear
     Rails.cache = ActiveSupport::Cache::MemoryStore.new
   end
+
+  config.before(:each) do
+    Rails.application.routes.default_url_options[:host] = 'www.example.com' # Or your test host
+  end
 end
