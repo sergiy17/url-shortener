@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   namespace :api do
-    resources :urls, only: %i[create index]
+    resources :urls, only: %i[create index show]
   end
 
   get '/:slug', to: 'redirect#redirect', as: :short_url

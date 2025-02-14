@@ -10,6 +10,16 @@ class Api::UrlsController < ApplicationController
     }
   end
 
+  def show
+    url = Url.find_by(slug: params[:id])
+
+    if url
+      render json: url, serializer: UrlSerializer
+    else
+      render json: { error: 'Not found' }, status: :not_found
+    end
+  end
+
   def create
     result = Url::Creator.call(params: create_url_params)
 
