@@ -2,10 +2,11 @@ RSpec.describe Api::UrlsController, type: :controller do
   let(:parsed_body) { JSON.parse(response.body) }
 
   describe "GET 'index'" do
-    it 'lists shortened URLs with related analytics' do
+    it 'lists shortened URLs with related analytics', :aggregate_failures do
       url_obj = FactoryBot.create(:url)
       get :index
 
+      expect(parsed_body['data'][0]['shortened_link']).to be_present
       expect(parsed_body['data'][0]['slug']).to eq(url_obj.slug)
       expect(parsed_body['data'][0]['original_url']).to eq(url_obj.original_url)
       expect(parsed_body['data'][0]['visits']).to eq(url_obj.analytic.visits)
@@ -17,7 +18,7 @@ RSpec.describe Api::UrlsController, type: :controller do
         FactoryBot.create_list(:url, 21)
       end
 
-      it 'provides correct meta data for the first page' do
+      it 'provides correct meta data for the first page', :aggregate_failures do
         get :index, params: { page: 1, per_page: 10 }
 
         expect(parsed_body['data'].length).to eq(10)
@@ -34,6 +35,28 @@ RSpec.describe Api::UrlsController, type: :controller do
 
         expect(parsed_body['data'].length).to eq(Url.per_page)
       end
+    end
+  end
+
+  describe "GET 'show'" do
+    let!(:url_obj) { FactoryBot.create(:url, slug: 'test-slug') }
+
+    it 'returns the URL if found', :aggregate_failures do
+      get :show, params: { id: url_obj.slug }
+
+      expect(response).to have_http_status(:ok)
+      expect(parsed_body['slug']).to eq(url_obj.slug)
+      expect(parsed_body['original_url']).to eq(url_obj.original_url)
+      expect(parsed_body['visits']).to eq(url_obj.analytic.visits)
+      expect(parsed_body['last_visit_at']).to eq(url_obj.analytic.last_visit_at)
+      expect(parsed_body['shortened_link']).to be_present
+    end
+
+    it 'returns a 404 if the URL is not found', :aggregate_failures do
+      get :show, params: { id: 'non-existent-slug' }
+
+      expect(response).to have_http_status(:not_found)
+      expect(parsed_body['error']).to eq('Not found')
     end
   end
 
