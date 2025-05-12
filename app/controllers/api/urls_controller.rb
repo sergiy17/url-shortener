@@ -1,4 +1,6 @@
 class Api::UrlsController < ApplicationController
+  protect_from_forgery with: :null_session
+
   def index
     urls = Url.includes(:analytic).paginate(page: params[:page], per_page: params[:per_page])
 
