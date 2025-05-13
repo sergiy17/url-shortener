@@ -42,7 +42,7 @@ RSpec.describe Api::UrlsController, type: :controller do
     let!(:url_obj) { FactoryBot.create(:url, slug: 'test-slug') }
 
     it 'returns the URL if found', :aggregate_failures do
-      get :show, params: { id: url_obj.slug }
+      get :show, params: { slug: url_obj.slug }
 
       expect(response).to have_http_status(:ok)
       expect(parsed_body['slug']).to eq(url_obj.slug)
@@ -53,7 +53,7 @@ RSpec.describe Api::UrlsController, type: :controller do
     end
 
     it 'returns a 404 if the URL is not found', :aggregate_failures do
-      get :show, params: { id: 'non-existent-slug' }
+      get :show, params: { slug: 'non-existent-slug' }
 
       expect(response).to have_http_status(:not_found)
       expect(parsed_body['error']).to eq('Not found')
@@ -111,6 +111,26 @@ RSpec.describe Api::UrlsController, type: :controller do
 
           expect(parsed_body['errors']).to eq(['Original url is not valid'])
         end
+      end
+    end
+  end
+
+  describe "DELETE 'destroy'" do
+    let!(:url_obj) { FactoryBot.create(:url, id: 'test-slug') }
+
+    context 'when the URL exists' do
+      it 'deletes the URL record', :aggregate_failures do
+        expect { delete :destroy, params: { slug: url_obj.slug } }.to change { Url.count }.by(-1)
+        expect(response).to have_http_status(:ok)
+        expect(parsed_body['success']).to eq(true)
+      end
+    end
+
+    context 'when the URL does not exist' do
+      it 'returns a 404 with an error message', :aggregate_failures do
+        delete :destroy, params: { slug: 'non-existent-slug' }
+        expect(response).to have_http_status(:not_found)
+        expect(parsed_body['error']).to eq('URL not found')
       end
     end
   end

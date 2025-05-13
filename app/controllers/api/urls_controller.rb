@@ -13,7 +13,7 @@ class Api::UrlsController < ApplicationController
   end
 
   def show
-    url = Url.find_by(slug: params[:id])
+    url = Url.find_by(slug: params[:slug])
 
     if url
       render json: url, serializer: UrlSerializer
@@ -29,6 +29,17 @@ class Api::UrlsController < ApplicationController
       render json: { slug: result.data[:slug] }
     else
       render json: { errors: result.data[:errors] }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    url = Url.find_by(slug: params[:slug])
+
+    if url
+      url.destroy
+      render json: { success: true }, status: :ok
+    else
+      render json: { error: 'URL not found' }, status: :not_found
     end
   end
 
