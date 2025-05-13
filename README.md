@@ -1,4 +1,10 @@
-# URL Shortener Project
+# URL Shortener | Rails
+
+Analogue to https://bitly.com.
+The main idea is - users will be able to save a long link and use a shortened version instead.
+Basically visiting the shortened link will redirect you to the original one.
+Apart from the main functionality the link owner will be able to collect the statistics about how many visits that link had.
+The short link will not be accessible after 1 month from the last visit etc
 
 <details>
   <summary>Project setup</summary>
