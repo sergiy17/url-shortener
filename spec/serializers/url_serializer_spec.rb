@@ -8,6 +8,7 @@ RSpec.describe UrlSerializer, type: :serializer do
     expect(serialized[:original_url]).to eq(url.original_url)
     expect(serialized[:visits]).to eq(url.analytic.visits)
     expect(serialized[:last_visit_at]).to eq(url.analytic.last_visit_at)
+    expect(serialized[:is_active]).to eq(false)
   end
 
   describe 'shortened_link' do

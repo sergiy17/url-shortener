@@ -4,7 +4,7 @@ class UrlSerializer < ActiveModel::Serializer
   attributes :shortened_link, :slug, :original_url, :visits, :last_visit_at, :is_active
 
   def shortened_link
-    short_url_url({ slug: Url.first.slug }.merge(Rails.application.config.action_controller.default_url_options))
+    short_url_url({ slug: object.slug }.merge(Rails.application.config.action_controller.default_url_options))
   end
 
   def visits
@@ -16,6 +16,6 @@ class UrlSerializer < ActiveModel::Serializer
   end
 
   def is_active
-    object.analytic&.last_visit_at&.>=(1.month.ago)
+    object.analytic&.last_visit_at&.>=(1.month.ago) || false
   end
 end
